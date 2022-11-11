@@ -1,3 +1,4 @@
+import { React, useState } from "react"
 import config from "../config.json"
 import styled from "styled-components"
 import { CSSReset } from "../src/components/CSSReset"
@@ -5,7 +6,9 @@ import Menu from "../src/components/Menu"
 import { StyledTimeline } from "../src/components/Timeline"
 
 function HomePage() {
-  return (
+    const [valorDoFiltro, setValorDoFiltro] = useState("");
+
+    return (
         <>
             <CSSReset/>
             <div style={{
@@ -13,56 +16,51 @@ function HomePage() {
                 flexDirection: "column",
                 flex: 1,
             }}>
-                <Menu/>
+                <Menu valorDoFiltro={valorDoFiltro} setValorDoFiltro={setValorDoFiltro}/>
                 <Header/>
-                <Timeline playlists={config.playlists}/>
+                <Timeline searchValue={valorDoFiltro} playlists={config.playlists}/>
             </div>
         </>    
-  )
+    )
 }
 
 export default HomePage
 
-/* function Menu(){
-  return(
-    <div>
-        Menu
-    </div>
-  )
-} */
-
 const StyledHeader = styled.div`
-    img{
+    .github-user{
         width:80px;
         height: 80px;
         border-radius:50%;
     }
     .info-user{
         display:flex;
-        margin-top: 50px;
         align-items:center;
         width: 100%;
         padding: 16px 32px;
         gap: 16px;
     }
 `
+const StyledBanner = styled.div`
+    background-image: url(${config.bg});
+    height: 230px;
+`
 
 function Header(){
   return(
     <StyledHeader>
-      {/* <img src={``}/> */}
-      <section className="info-user">
-          <img src={`http://github.com/${config.github}.png`}/>
-          <div>
+        <StyledBanner/>
+        <section className="info-user">
+            <img className="github-user" src={`http://github.com/${config.github}.png`}/>
+            <div>
             <h2>{config.name}</h2>
             <p>{config.job}</p>
-          </div>
-      </section>
+            </div>
+        </section>
     </StyledHeader>
   )
 }
 
-function Timeline({playlists}){
+function Timeline({searchValue, playlists}){
     const playlistNames = Object.keys(playlists);
 
     return(
@@ -71,17 +69,23 @@ function Timeline({playlists}){
                 playlistNames.map(playlistName => {
                     const videos = playlists[playlistName];
                     return (
-                        <section>
+                        <section key={playlistName}>
                         <h2>{playlistName}</h2>
                         <div>
-                            {videos.map( video => {
-                                return(
-                                    <a href={video.url}>
-                                        <img src={video.thumb}/>
-                                        <span>{video.title}</span>
-                                    </a>
-                                )
-                            })}
+                            {videos
+                                .filter(video => {
+                                    const titleNormalized = video.title.toLowerCase();
+                                    const searchValueNormalized = searchValue.toLowerCase();
+                                    return titleNormalized.includes(searchValueNormalized);
+                                })
+                                .map( video => {
+                                    return(
+                                        <a key={video.url} href={video.url}>
+                                            <img src={video.thumb}/>
+                                            <span>{video.title}</span>
+                                        </a>
+                                    )
+                                })}
                         </div>
                         </section>
                     );
