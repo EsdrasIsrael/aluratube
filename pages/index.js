@@ -1,7 +1,6 @@
 import { React, useState } from "react"
 import config from "../config.json"
 import styled from "styled-components"
-import { CSSReset } from "../src/components/CSSReset"
 import Menu from "../src/components/Menu"
 import { StyledTimeline } from "../src/components/Timeline"
 
@@ -10,7 +9,6 @@ function HomePage() {
 
     return (
         <>
-            <CSSReset/>
             <div style={{
                 display: "flex",
                 flexDirection: "column",
@@ -27,6 +25,8 @@ function HomePage() {
 export default HomePage
 
 const StyledHeader = styled.div`
+    background-color: ${({theme}) => theme.backgroundLevel1};
+
     .github-user{
         width:80px;
         height: 80px;
@@ -80,7 +80,7 @@ function Timeline({searchValue, playlists}){
                                 })
                                 .map( video => {
                                     return(
-                                        <a key={video.url} href={video.url}>
+                                        <a key={video.url} href={video.url} target="_blank">
                                             <img src={video.thumb}/>
                                             <span>{video.title}</span>
                                         </a>
